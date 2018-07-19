@@ -43,7 +43,7 @@ def handle_calculate_IK(req):
              alpha5:    -pi/2,  a5:        0,   d6:     0,  q6: 0,
              alpha6:        0,  a6:        0,   d7: 0.303,  q7: 0}
 
-	    # Define Modified DH Transformation matrix
+	# Define Modified DH Transformation matrix
     	def TF_Matrix(alpha, a, d, q):
             TF = Matrix([[			  cos(q),           -sin(q),           0,             a],
                          [ sin(q)*cos(alpha), cos(q)*cos(alpha), -sin(alpha), -sin(alpha)*d],
@@ -51,7 +51,7 @@ def handle_calculate_IK(req):
                        	 [                 0,                 0,           0,             1]])
             return TF
 
-	    # Create individual transformation matrices
+	# Create individual transformation matrices
     	T0_1 = TF_Matrix(alpha0, a0, d1, q1).subs(s)
         T1_2 = TF_Matrix(alpha1, a1, d2, q2).subs(s)
         T2_3 = TF_Matrix(alpha2, a2, d3, q3).subs(s)
@@ -59,15 +59,14 @@ def handle_calculate_IK(req):
         T4_5 = TF_Matrix(alpha4, a4, d5, q5).subs(s)
         T5_6 = TF_Matrix(alpha5, a5, d6, q6).subs(s)
         T6_EE = TF_Matrix(alpha6, a6, d7, q7).subs(s)
-
-        T0_6 = T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6
-        T0_EE = T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_EE
+        	
+	#Generalized transformation matrix from base link to end effector
+        T0_EE = T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_EE 
 
         # Extract rotation matrices from the transformation matrices
-        R0_3 = 	T0_1[0:3, 0:3] * T1_2[0:3, 0:3] * T2_3[0:3, 0:3]
         RO_EE = T0_EE[0:3, 0:3]
 
-        ###
+        ### End Forward Kinematics
 
         # Initialize service response
         joint_trajectory_list = []
@@ -87,7 +86,7 @@ def handle_calculate_IK(req):
                     req.poses[x].orientation.z, req.poses[x].orientation.w])
 
         ### Inverse Kinematics
-        # Compensate for rotation discrepancy between DH parameters and Gazebo
+        #Compensate for rotation discrepancy between DH parameters and Gazebo
         R_z = Matrix([[     cos(np.pi), -sin(np.pi),             0,  0],
                       [     sin(np.pi),  cos(np.pi),             0,  0],
                       [              0,           0,             1,  0],
@@ -98,33 +97,36 @@ def handle_calculate_IK(req):
                       [              0,           0,             0,  1]])
         R_corr = simplify(R_z * R_y)
 
-	    # Calculate joint angles using Geometric IK method
-        #sss triangle sides
-        side_a = sqrt(pow((WC[2]-0.75), 2) + pow((WC[0]-0.35), 2))
-        side_b = 1.501
-        side_c = 1.25
+	# Calculate joint angles using Geometric IK method
+        #SSS triangle sides created between Joint 2, Joint 3, and the WC.  See README for figures and hand calculations.
+        side_a = sqrt(pow((WC[2]-0.75), 2) + pow((WC[0]-0.35), 2))  # length from Joint 2 to WC
+        side_b = 1.501 # equivalent to sqrt(a3*a3 + d4*d4)
+        side_c = 1.25 # equivalent to a2
 
-        #angles
-        angle_A = acos((pow(side_b, 2) + pow(side_c, 2) - pow(side_a, 2)) / (2 * side_b * side_c))
-        angle_B = acos((pow(side_a, 2) + pow(side_c, 2) - pow(side_b, 2)) / (2 * side_a * side_c))
-        angle_C = acos((pow(side_a, 2) + pow(side_b, 2) - pow(side_c, 2)) / (2 * side_a * side_b))
-        gamma1 = atan2(0.054, 1.50) #Offset angle between joint 3 and 4
-        gamma2 = atan2(WC[2] - 0.75, sqrt(WC[0] * WC[0] + WC[1] * WC [1]) - 0.35)
+        #SSS triangle angles created between Joint 2, Joint3, and the WC.  See README for figures and hand calculations.
+        angle_A = acos((pow(side_b, 2) + pow(side_c, 2) - pow(side_a, 2)) / (2 * side_b * side_c)) #angle between side_b and side_c
+        angle_B = acos((pow(side_a, 2) + pow(side_c, 2) - pow(side_b, 2)) / (2 * side_a * side_c)) #angle between side_a and side_c
+        angle_C = acos((pow(side_a, 2) + pow(side_b, 2) - pow(side_c, 2)) / (2 * side_a * side_b)) #angle between side_a and side_b
+        gamma1 = atan2(0.054, 1.50) #Offset angle calculated by atan2(a3, d4) for determining theta3
+        gamma2 = atan2(WC[2] - 0.75, sqrt(WC[0] * WC[0] + WC[1] * WC [1]) - 0.35) #Offset angle for determining theta2
 
-        theta1 = atan2(WC[1], WC[0])
+	#theta locations shown in README.
+        theta1 = atan2(WC[1], WC[0]) 
         theta2 = pi / 2 - (angle_B + gamma2)
         theta3 = (angle_A + gamma1) - pi / 2
 
-        R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3]
-        R0_3 = R0_3.evalf(subs={q1: theta1, q2: theta2, q3: theta3})
+	#Calculate rotation matrix for orientation of WC by inverse matrix multiplication of ROT
+        R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3] #Generalized rotation matrix to WC
+        R0_3 = R0_3.evalf(subs={q1: theta1, q2: theta2, q3: theta3}) #Rotation matrix to WC at current WC position
+        R3_6 = R0_3.inv("LU") * ROT_EE #Rotation matrix for orientation of WC
 
-        R3_6 = R0_3.inv("LU") * ROT_EE
-
-        # Euler angles from rotation matrix
+        #Euler angles from rotation matrix
         theta4 = atan2(R3_6[2,2], -R3_6[0,2])
         theta5 = atan2(sqrt(pow(R3_6[0,2], 2) + pow(R3_6[2,2], 2)), R3_6[1,2])
         theta6 = atan2(-R3_6[1,1], R3_6[1,0])
 
+	### END Inverse Kinematics
+	
         # Populate response for the IK request
         # In the next line replace theta1,theta2...,theta6 by your joint angle variables
         joint_trajectory_point.positions = [theta1, theta2, theta3, theta4, theta5, theta6]
