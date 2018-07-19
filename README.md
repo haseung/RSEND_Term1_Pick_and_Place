@@ -12,7 +12,7 @@ The following README is for the Udacity Robotics Software Engineering Nanodegree
 
 A kinematic analysis was performed on the Kuka kr210  6 degree of freedom robot manipulator using the modified Denavit-Hartenberg parameters.  The figure below indicates locations for each joint origin and corresponding axes.  The DH parameter table is show below per the convention used in the Udacity notes (Craig)
 
-![DH Parameter Notation Locations][DH Figure 2.jpg]
+![DH Parameter Notation Locations](https://github.com/haseung/term1_project2_pickandplace/blob/master/DH%20Figure.JPG)
 
 #### 2. Using the DH parameter table you derived earlier, create individual transformation matrices about each joint. In addition, also generate a generalized homogeneous transform between the base_link and gripper_link using only the end-effector(gripper) pose.
 
@@ -78,7 +78,7 @@ The generalized homogeneous transform between the base_link and gripper_link is:
 
 The inverse kinematics of the KR210 robot for theta1, theta2, and theta3 were determined using the geometric method shown below:
 
-![Geometric Method][geometricmethod.jpg]
+![Geometric Method](https://github.com/haseung/term1_project2_pickandplace/blob/master/geometricmethod.jpg)
 
 theta4, theta5, and theta6 were determined by the extracting Euler Angles from the rotation matrix from Joint 3 to Joint 6
 
@@ -100,11 +100,11 @@ Next the inverse kinematics are calculated.  This is done by:
 
 Finally, once all 6 joint angles are returned for use in the joint_trajector_list.
 
-![PickPlaceExample][PickPlaceSteo1.jpg]
+![PickPlaceStep1](https://github.com/haseung/term1_project2_pickandplace/blob/master/PickPlaceStep1.JPG)
 KR210 Retrieving randomly placed object
 
-![PickPlaceExample][PickPlaceSteo2.jpg]
+![PickPlaceStep2](https://github.com/haseung/term1_project2_pickandplace/blob/master/PickPlaceStep2.JPG)
 KR210 Returning placed object to dropoff location
 
-![PickPlaceExample][PickPlaceSteo3.jpg]
+![PickPlaceStep3](https://github.com/haseung/term1_project2_pickandplace/blob/master/PickPlaceStep3.JPG)
 KR210 returning to start position after successful delivery of object
