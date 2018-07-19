@@ -19,60 +19,76 @@ A kinematic analysis was performed on the Kuka kr210  6 degree of freedom robot 
 Using the DH parameter table, individual transformation matrices for each joint were created for the starting position:
 
 base_link to link1:
-('T0_1 = ', Matrix([
-[1.0,   0,   0,    0],
-[  0, 1.0,   0,    0],
-[  0,   0, 1.0, 0.75],
-[  0,   0,   0,  1.0]]))
+
+|     |   l |    m|    n|    P|
+| ----| ----| ----| ----| ----|
+|    x|  1.0|    0|    0|    0| 
+|    y|    0|  1.0|    0|    0| 
+|    z|    0|    0|  1.0| 0.75| 
+|     |    0|    0|    0|    0| 
 
 base_link to link2:
-('T0_2 = ', Matrix([
-[  0, 1.0,   0, 0.35],
-[  0,   0, 1.0,    0],
-[1.0,   0,   0, 0.75],
-[  0,   0,   0,  1.0]]))
+
+|     |   l |    m|    n|    P|
+| ----| ----| ----| ----| ----|
+|    x|    0|  1.0|    0| 0.35| 
+|    y|    0|    0|  1.0|    0| 
+|    z|  1.0|    0|    0| 0.75| 
+|     |    0|    0|    0|  1.0| 
 
 base_link to link3:
-('T0_3 = ', Matrix([
-[  0, 1.0,   0, 0.35],
-[  0,   0, 1.0,    0],
-[1.0,   0,   0,  2.0],
-[  0,   0,   0,  1.0]]))
+
+|     |   l |    m|    n|    P|
+| ----| ----| ----| ----| ----|
+|    x|    0|  1.0|    0| 0.35| 
+|    y|    0|    0|  1.0|    0| 
+|    z|  1.0|    0|    0|    2| 
+|     |    0|    0|    0|  1.0| 
 
 base_link to link4:
-('T0_4 = ', Matrix([
-[  0,    0, 1.0,  1.85],
-[  0, -1.0,   0,     0],
-[1.0,    0,   0, 1.946],
-[  0,    0,   0,   1.0]]))
+
+|     |   l |    m|    n|     P|
+| ----| ----| ----| ----|  ----|
+|    x|    0|    0|  1.0|  1.85| 
+|    y|    0| -1.0|    0|     0| 
+|    z|  1.0|    0|    0| 1.946| 
+|     |    0|    0|    0|   1.0| 
 
 base_link to link5:
-('T0_5 = ', Matrix([
-[  0, 1.0,   0,  1.85],
-[  0,   0, 1.0,     0],
-[1.0,   0,   0, 1.946],
-[  0,   0,   0,   1.0]]))
+
+|     |   l |    m|    n|     P|
+| ----| ----| ----| ----|  ----|
+|    x|    0|  1.0|    0|  1.85| 
+|    y|    0|    0|  1.0|     0| 
+|    z|  1.0|    0|    0| 1.946| 
+|     |    0|    0|    0|   1.0|
 
 base_link to link6:
-('T0_6 = ', Matrix([
-[  0,    0, 1.0,  1.85],
-[  0, -1.0,   0,     0],
-[1.0,    0,   0, 1.946],
-[  0,    0,   0,   1.0]]))
+
+|     |   l |    m|    n|     P|
+| ----| ----| ----| ----|  ----|
+|    x|    0|    0|  1.0|  1.85| 
+|    y|    0| -1.0|    0|     0| 
+|    z|  1.0|    0|    0| 1.946| 
+|     |    0|    0|    0|   1.0|
 
 base_link to gripper_link/end effector:
-('T0_EE = ', Matrix([
-[  0,    0, 1.0, 2.153],
-[  0, -1.0,   0,     0],
-[1.0,    0,   0, 1.946],
-[  0,    0,   0,   1.0]]))
+
+|     |   l |    m|    n|     P|
+| ----| ----| ----| ----|  ----|
+|    x|    0|    0|  1.0| 2.153| 
+|    y|    0| -1.0|    0|     0| 
+|    z|  1.0|    0|    0| 1.946| 
+|     |    0|    0|    0|   1.0|
 
 The generalized homogeneous transform between the base_link and gripper_link is:
-('T_total = ', Matrix([
-[1.0,   0,   0, 2.153],
-[  0, 1.0,   0,     0],
-[  0,   0, 1.0, 1.946],
-[  0,   0,   0,  1.0]]))
+
+|     |   l |    m|    n|     P|
+| ----| ----| ----| ----|  ----|
+|    x|  1.0|    0|    0| 2.153| 
+|    y|    0|  1.0|    0|     0| 
+|    z|    0|    0|  1.0| 1.946| 
+|     |    0|    0|    0|   1.0|
 
 #### 3. Decouple Inverse Kinematics problem into Inverse Position Kinematics and inverse Orientation Kinematics; doing so derive the equations to calculate all individual joint angles.
 
