@@ -96,7 +96,9 @@ The inverse kinematics of the KR210 robot for theta1, theta2, and theta3 were de
 
 ![Geometric Method](https://github.com/haseung/term1_project2_pickandplace/blob/master/geometricmethod.jpg)
 
-theta4, theta5, and theta6 were determined by the extracting Euler Angles from the rotation matrix from Joint 3 to Joint 6
+Theta4, theta5, and theta6 are determined by using the Euler Angles for a Rzyx extrinsic rotation.  The method involves finding R3_6 by pre-multipying the R0_6 rotation matrix by the inverse/transpose of R0_3.  Then theta 1, 2, 3 are substituted into R3_6 resulting in an exact solution.  Additionally R3_6 can be found generally using the Euler Angle for a Rzyx extrinsic rotation.  Solving for theta 4, 5, and 6 as shown in the figure below and equating each method for R3_6 allows us to solve for the exact solutions of theta 4, 5, and 6.   
+
+![EulerAngles](https://github.com/haseung/term1_project2_pickandplace/blob/master/EulerAngles.jpg)
 
 ### Project Implementation
 
@@ -124,3 +126,6 @@ KR210 Returning placed object to dropoff location
 
 ![PickPlaceStep3](https://github.com/haseung/term1_project2_pickandplace/blob/master/PickPlaceStep3.JPG)
 KR210 returning to start position after successful delivery of object
+
+![CompletedPickPlace](https://github.com/haseung/term1_project2_pickandplace/blob/master/CompletedPickPlace.JPG)
+KR210 successfully retrieving 9/10 objects
