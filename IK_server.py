@@ -115,12 +115,12 @@ def handle_calculate_IK(req):
         theta2 = pi / 2 - (angle_B + gamma2)
         theta3 = (angle_A + gamma1) - pi / 2
 
-	#Calculate rotation matrix for orientation of WC by inverse matrix multiplication of ROT
-        R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3] #Generalized rotation matrix to WC
-        R0_3 = R0_3.evalf(subs={q1: theta1, q2: theta2, q3: theta3}) #Rotation matrix to WC at current WC position
-        R3_6 = R0_3.inv("LU") * ROT_EE #Rotation matrix for orientation of WC
-
-        #Euler angles from rotation matrix
+	#Inverse Orientation for WC
+	R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3] # Generalized rotation matrix to WC
+        R0_3 = R0_3.evalf(subs={q1: theta1, q2: theta2, q3: theta3}) #Substitute theta 1 to 3 for current WC orientation
+        R3_6 = R0_3.inv("LU") * ROT_EE #Calculate R3_6 by premultiplying ROT_EE by the inverse of R0_3
+	
+        #Derive theta 4, 5, and 6 using Euler Angles from Rotation Matrix
         theta4 = atan2(R3_6[2,2], -R3_6[0,2])
         theta5 = atan2(sqrt(pow(R3_6[0,2], 2) + pow(R3_6[2,2], 2)), R3_6[1,2])
         theta6 = atan2(-R3_6[1,1], R3_6[1,0])
