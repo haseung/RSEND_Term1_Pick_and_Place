@@ -63,9 +63,6 @@ def handle_calculate_IK(req):
 	#Generalized transformation matrix from base link to end effector
         T0_EE = T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_EE 
 
-        # Extract rotation matrices from the transformation matrices
-        RO_EE = T0_EE[0:3, 0:3]
-
         ### End Forward Kinematics
 
         # Initialize service response
@@ -116,14 +113,14 @@ def handle_calculate_IK(req):
         theta3 = (angle_A + gamma1) - pi / 2
 
 	#Inverse Orientation for WC
-	R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3] # Generalized rotation matrix to WC
+        R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3] # Generalized rotation matrix to WC
         R0_3 = R0_3.evalf(subs={q1: theta1, q2: theta2, q3: theta3}) #Substitute theta 1 to 3 for current WC orientation
-        R3_6 = R0_3.inv("LU") * ROT_EE #Calculate R3_6 by premultiplying ROT_EE by the inverse of R0_3
+        R3_6 = R0_3.transpose * ROT_EE * R_corr #Calculate R3_6 by premultiplying ROT_EE by the inverse of R0_3
 	
-        #Derive theta 4, 5, and 6 using Euler Angles from Rotation Matrix
-        theta4 = atan2(R3_6[2,2], -R3_6[0,2])
-        theta5 = atan2(sqrt(pow(R3_6[0,2], 2) + pow(R3_6[2,2], 2)), R3_6[1,2])
-        theta6 = atan2(-R3_6[1,1], R3_6[1,0])
+        #Derive theta 4, 5, and 6 using Euler Angles from Rotation Matrix, see README for hand calculations
+        theta4 = atan2(R3_6[1,0], R3_6[0,0])
+        theta5 = atan2(R3_6[2,0], sqrt(pow(R3_6[0,0], 2) + pow(R3_6[1,0], 2)))
+        theta6 = atan2(R3_6[2,1], R3_6[2,2])
 
 	### END Inverse Kinematics
 	
